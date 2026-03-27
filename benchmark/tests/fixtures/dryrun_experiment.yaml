@@ -1,0 +1,27 @@
+# Dryrun experiment configuration for testing
+# This config uses a simple HTTP server and echo commands to test the pipeline
+
+name: dryrun_test
+
+execution:
+  type: local
+  output_dir: /tmp/dryrun_results
+
+deployment:
+  type: dryrun
+  model_id: test-model
+  tensor_parallel_size: 1
+  data_parallel_size: 1
+  pipeline_parallel_size: 1
+  extra_args:
+  env_vars:
+
+target:
+  api_endpoint: http://localhost:8000
+  model_id: test-model
+  api_key_name: OPENAI_API_KEY
+
+benchmark:
+  task: dryrun
+  num_samples: 1
+  env_vars:

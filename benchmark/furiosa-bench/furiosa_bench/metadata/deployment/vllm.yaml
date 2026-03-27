@@ -1,0 +1,26 @@
+deployment:
+  name: vllm
+  model_id: <client-model-id>
+  tensor_parallel_size: 1
+  data_parallel_size: 1
+  pipeline_parallel_size: 1
+  gpu_memory_utilization: 0.8
+  host: "0.0.0.0"
+  port: 8000
+  command: >
+    vllm serve {{deployment.model_id}}
+    --tensor-parallel-size={{deployment.tensor_parallel_size}}
+    --pipeline-parallel-size={{deployment.pipeline_parallel_size}}
+    --data-parallel-size={{deployment.data_parallel_size}}
+    --trust-remote-code --host {{deployment.host}} --port {{deployment.port}}
+    {% if deployment.extra_args %}{{deployment.extra_args}}{% endif %}
+  extra_args:
+  # Device indices to use (e.g. [0] or [0, 1, 2, 3]). Sets CUDA_VISIBLE_DEVICES automatically.
+  devices:
+  env_vars:
+    CUDA_VISIBLE_DEVICES:
+endpoints:
+  chat: /v1/chat/completions
+  completions: /v1/completions
+  health: /health
+  model: /v1/models

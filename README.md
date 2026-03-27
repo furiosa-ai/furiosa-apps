@@ -1,75 +1,57 @@
+[![RNGD](https://img.shields.io/badge/Powered_by-RNGD-B91C1C?logo=chip&logoColor=white)](https://developer.furiosa.ai/latest/en/)
 
-<img src=https://github.com/furiosa-ai/sdk-cookbook/blob/main/docs/images/icon.png width="100"/>
+# Furiosa Reference Applications
 
-
-
-# Furiosa SDK CookBook
-A collection of open-source resources and tutorials to help developers seamlessly integrate AI-driven solutions using Furiosa SDK and development tools. Let's explore how AI engineers and researchers can build their own applications using the Furiosa SDK and RNGDs.
-
-## Target audience
-This cookbook is for:
-- AI engineers: Engineers seeking a quickstart to build production-grade AI applications using Furiosa SDKs.
-- AI researchers: Researchers aiming to rapidly prototype AI workflows using Furiosa SDKs.
-- AI solution architects: Solution architects looking to efficiently design and implement AI use cases using Furiosa SDKs.
+`furiosa-apps` provides end-to-end reference implementations built with Furiosa-LLM, covering benchmarks, interactive demos, and integrations with open-source AI platforms.
 
 
 ## Prerequisites
+- For Furiosa SDK installation and setup instructions, see [Quick Start with Furiosa-LLM](https://developer.furiosa.ai/latest/en/get_started/furiosa_llm.html).
+- Clone this repository and navigate the directory, selecting which reference you want to run.
+  ```bash
+  # Clone the repository
+  git clone https://github.com/furiosa-ai/furiosa-apps.git
 
-If you have access to the FurisoaAI LLM API endpoint or a dedicated RNGD server, the only step you need to take before beginning the SDK cookbook is installing the necessary prerequisites for the Furiosa SDK stack. Please refer to the provided page to choose and set up your preferred version of the FuriosaAI SDK. Currently, this SDK cookbook is based on Furiosa SDK version 2025.3.0
-- [Install Prerequisites for Furiosa SDK](https://developer.furiosa.ai/latest/en/getting_started/prerequisites.html)
-- [Navigate Furiosa SDK Documents](https://developer.furiosa.ai/latest/en/index.html)
-  
+  # Navigate to the target reference application
+  cd furiosa-apps/<applications>
 
-## Beginner's guide 
-This guide provides an introduction to using the Furiosa SDK for large language model (LLM) applications. The guide is intended for users new to the Furiosa SDK and covers the basic setup and usage required to get started. It includes:
-- [Instruction for Generating LLM Inference Using Furiosa SDK](https://github.com/furiosa-ai/sdk-cookbook/blob/main/beginners-guide/use_generation.ipynb)
-- [Steps for Implementing Tool Calling with Furiosa SDK to Build AI Agent](https://github.com/furiosa-ai/sdk-cookbook/blob/main/beginners-guide/use_tool_calling.ipynb)
+  # Install Python venv
+  python -m venv venv
+  source venv/bin/activate
+  ```
 
-## Usecase
-| Name | Description | Framework / Integration                  | Use-case |
-| --------- | --- | --- | --- |
-| [Unit Test Generator](https://github.com/furiosa-ai/sdk-cookbook/tree/main/unit-test-generator) | LLM-based Code Explanation & Unit Test Generator | - | Text Generation |
-| [Weekly News Reporter](https://github.com/furiosa-ai/sdk-cookbook/tree/main/weekly-news-reporter) | LLM-based Weekly News Retriever & Summarizer | LangGraph  | Multi Agent |
-| [Simple RAG](https://github.com/furiosa-ai/sdk-cookbook/tree/main/simple-rag) | End-to-end Retrieval-Augmented Generation with custom documents | LangChain | RAG |
-| [Financial AI Chatbot](https://github.com/furiosa-ai/sdk-cookbook/tree/main/finance-ai-chatbot) | Finance AI Chatbot with Query Routing | LangChain | Question Answering |
-| [Coding Assistant](https://github.com/furiosa-ai/sdk-cookbook/tree/main/coding-assistant) | Open-Source Copilot for Code Completion & Assistance | Integration | Code Generation |
-<!--| Agent with MCP adapter | Agent doing tool calling with MCP adapter | Integration | Agent | -->
-<!--| Market Competitive Analysis | Multi-Agent doing market competitive analysis | BeeAI | Multi-agent | -->  
+## Applications
 
-<!--  ## By Framework -->
-<!-- | Framework | Name | Description                   | Tags | -->
-<!--| --------- | --- | --- | --- | -->
-<!--| LangGraph | [Weekly News Reporter](framework/langgraph/weekly_news_reporter) | Multi-agent example generate weekly news summary   | Multi-agent | -->
-<!--| AutoGen | [CSV Chart Generation](csv-chart-generation) | Chart generation with chart type suggestion  | Multi-agent | -->
+| Name | Description | Primary Use Case |
+|------|-------------|-----------------|
+| [Benchmark](/benchmark) | A comprehensive evaluation framework for measuring performance and accuracy of LLMs on Furiosa RNGD. | Hardware evaluation and comparison |
+| [Chat Playground](/chat-playground) | A full-stack chatbot application with real-time inference metrics, built on Furiosa-LLM. | Interactive LLM inference exploration |
+| [Coding Agent](/coding-agent) | A terminal-based AI coding assistant (OpenCode) and a web-based unit-test generator, both powered by Furiosa-LLM. | AI-assisted software development |
+| [LLM Assistant](/llm-assistant) | A collection of AI assistant applications: an OpenClaw agent platform integration, a multi-agent weekly news reporter, and a real-time financial sentiment analysis dashboard. | Custom AI Support |
+| [RAG](/rag) | An end-to-end RAG pipeline using embedding, reranker, and generation models served via Furiosa-LLM. | Knowledge-grounded question answering |
+
+> These applications are provided for reference purposes only and are not intended for production use.
 
 
-<!--## Framework Integrations -->
-<!--| Framework | Description -->               
-<!--| --------- | --- | -->
-<!--| LangChain | | -->
-<!--| AutoGen |  | -->
-<!--| LiteLLM | | -->
-<!--| SmolAgents | | -->
-<!--| BeeAI | | -->
 
+## Supported models
+The pre-compiled models are available at [FuriosaAI models on Hugging Face](https://huggingface.co/furiosa-ai/models).
 
-## How-to-Start
-We recommend installing dependencies individually for each recipe in the cookbook. Every recipe has its own `README.md` and `requirements.txt`.
-To get started with a recipe for building basic applications:
-
-- Clone the `sdk-cookbook` repository.
-- Choose a recipe and navigate to its folder.
-- Set up a virtual environment.
-- Install the necessary packages with `requirements.txt`.
-- Follow the instructions in the `README.md` file.
+| Model (HF ID) | Required RNGDs | Max Context Length |
+|---|---|---|
+| [furiosa-ai/EXAONE-4.0-32B-FP8](https://huggingface.co/furiosa-ai/EXAONE-4.0-32B-FP8) | 4 | 131072 |
+| [furiosa-ai/Qwen3-32B-FP8](https://huggingface.co/furiosa-ai/Qwen3-32B-FP8) | 4 | 40960 |
+| [furiosa-ai/Llama-3.3-70B-Instruct](https://huggingface.co/furiosa-ai/Llama-3.3-70B-Instruct) | 4 | 131072 |
+| [furiosa-ai/Llama-3.1-8B-Instruct](https://huggingface.co/furiosa-ai/Llama-3.1-8B-Instruct) | 1 | 131072 |
+| [furiosa-ai/Qwen3-Embedding-8B](https://huggingface.co/furiosa-ai/Qwen3-Embedding-8B) | 1 | 8192 |
+| [furiosa-ai/Qwen3-Reranker-8B](https://huggingface.co/furiosa-ai/Qwen3-Reranker-8B) | 1 | 8192 |
 
 
 ## Support
-Please note that the use-case examples in the Furiosa SDK CookBook are provided for guide purposes only and are not intended for production use. If you have questions or would like to discuss how to develop your own AI application using the Furiosa SDK, feel free to open a pull request or submit an issue. For broader discussions or support of Furiosa SDK, we encourage you to participate in the open forum linked below.
-  - [FuriosaAI Forum](https://forums.furiosa.ai/)
+For broader discussions or support of Furiosa SDK and RNGD, we encourage you to participate in the open forum linked below.
+
+- [FuriosaAI Forum](https://forums.furiosa.ai/)
+
 
 ## License
-This project is licensed under the Apache License 2.0 - see the [LICENSE](https://github.com/furiosa-ai/sdk-cookbook/blob/main/LICENSE) file for further details.
-
-
-
+This project is licensed under the Apache License 2.0 — see the [LICENSE](LICENSE) file for details.

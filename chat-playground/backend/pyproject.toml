@@ -1,0 +1,14 @@
+[project]
+name = "websocket-chat-backend"
+version = "0.1.0"
+description = "FastAPI WebSocket backend for chat UI"
+requires-python = ">=3.8"
+dependencies = [
+    "fastapi>=0.104.1",
+    "psutil>=6.1.0",
+    "uvicorn[standard]>=0.24.0",
+    "websockets>=12.0",
+]
+
+[tool.uv]
+dev-dependencies = []

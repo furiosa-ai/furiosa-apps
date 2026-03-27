@@ -1,0 +1,13 @@
+[project]
+name = "financial_analysis_backend"
+version = "0.1.0"
+description = "Financial Analysis Backend"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.116.1",
+    "pandas>=2.3.1",
+    "psutil>=7.0.0",
+    "uvicorn>=0.35.0",
+    "openai>=1.0.0",
+]

@@ -1,0 +1,27 @@
+deployment:
+  name: furiosa-llm
+  model_id: <client-model-id>
+
+  # RNGD uses the term 'tensor-parallel-size' in terms of number of PEs in a device,
+  # while vllm uses it in terms of number of GPUs. Assuming each RNGD has 8 PEs,
+  # we multiply the value by 8 to align with vllm's interpretation.
+  tensor_parallel_size: 8
+  data_parallel_size: 1
+  host: "127.0.0.1"
+  port: 8000
+  command: >
+    furiosa-llm serve {{deployment.model_id}}
+    --tensor-parallel-size={{deployment.tensor_parallel_size}}
+    --data-parallel-size={{deployment.data_parallel_size}}
+    --host {{deployment.host}} --port {{deployment.port}}
+    {% if deployment.extra_args %}{{deployment.extra_args}}{% endif %}
+  extra_args:
+  # Device indices to use (e.g. [0] or [0, 1, 2, 3]). Sets --devices for furiosa-llm.
+  devices:
+  env_vars:
+
+endpoints:
+  chat: /v1/chat/completions
+  completions: /v1/completions
+  health: /health
+  model: /v1/models

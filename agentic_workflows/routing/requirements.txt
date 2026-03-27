@@ -1,3 +1,0 @@
-langchain
-langchain-openai
-furiosa-llm==2025.3.0

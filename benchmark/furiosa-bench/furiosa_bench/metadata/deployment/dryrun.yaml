@@ -1,0 +1,20 @@
+deployment:
+  name: dryrun
+  model_id: test-model
+
+  tensor_parallel_size: 1
+  data_parallel_size: 1
+  pipeline_parallel_size: 1
+  extra_args:
+  env_vars:
+  # Dryrun uses Python's built-in HTTP server for testing
+  command: python -m http.server 8000
+
+target:
+  api_endpoint: http://localhost:8000
+  model_id: test-model
+
+endpoints:
+  chat: /v1/chat/completions
+  completions: /v1/completions
+  health: /health

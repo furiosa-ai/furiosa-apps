@@ -1,0 +1,12 @@
+langchain-core
+langchain-openai
+langgraph
+langsmith
+orjson
+PyYAML
+requests
+tiktoken
+tqdm
+furiosa-llm==2025.3.0
+openai
+pydantic
