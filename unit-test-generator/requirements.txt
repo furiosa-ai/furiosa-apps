@@ -1,4 +1,0 @@
-openai
-requests
-streamlit
-furiosa-llm==2025.3.0

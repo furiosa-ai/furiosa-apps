@@ -1,0 +1,44 @@
+# How to use
+
+# 1. copy this file
+# 2. change the configs for favorable evaluation settings
+# 3. run 'furiosa-bench run --config config.yaml'
+
+# Unique identifier name for the evaluation task
+name: math_qwen2_5_0_5b_instruct_gpu
+
+execution:
+  # Execution environment type (local: local machine, remote: remote server, etc.)
+  type: local
+  # Output directory path where evaluation results will be saved
+  output_dir: math_qwen2_5_0_5b_instruct_results
+  # Benchmark workspace where the evaluation will be executed
+  workspace: workspace
+
+deployment:
+  # Deployment type
+  # furiosa-llm: uses Furiosa AI's LLM deployment system to evaluate the model on RNGDs
+  # vllm: uses open-source LLM serving framework to evaluate the model on GPU
+  type: vllm
+  # Model name registered on Hugging Face
+  model_id: Qwen/Qwen2.5-0.5B-Instruct
+  tensor_parallel_size: 1
+  data_parallel_size: 1
+  pipeline_parallel_size: 1
+  port: 8000
+  # specify device indexes to monitor usage and
+  # set environment variables for device selection
+  # extra_args: --devices for furiosa-llm, CUDA_VISIBLE_DEVICES for gpu
+  devices: [0]
+  extra_args: --override-generation-config '{"repetition_penalty":1.0}'
+
+benchmark:
+  # The benchmark task to run
+  task: math
+  config:
+    # Additional arguments for the benchmark task
+    use_endpoint_type: completions
+  # Environment variables to use during benchmark execution
+  env_vars:
+    # OPENAI_API_KEY for openai API (if needed by the benchmark task, e.g., for math)
+    OPENAI_API_KEY: <your_openai_api_key_here>

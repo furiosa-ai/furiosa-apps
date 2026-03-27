@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "furiosa-apps"
+version = "0.0.1"
+description = "Reference applications for FuriosaAI RNGD, providing runnable examples and evaluation tools."
+authors = [{ name = "Furiosa AI Inc." }]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.10"
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+furiosa_llm = ["furiosa-llm>=2025.3"]
+
+dev = [
+    "pytest",
+    "black",
+    "ruff",
+    "pydoclint",
+    "pre-commit",
+    "types-requests",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "S", "NPY", "PTH"]
+ignore = ["E203", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.black]
+line-length = 120
+target-version = ["py310"]

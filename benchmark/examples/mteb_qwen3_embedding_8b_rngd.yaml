@@ -1,0 +1,42 @@
+# How to use
+
+# 1. copy this file
+# 2. change the configs for favorable evaluation settings
+# 3. run 'furiosa-bench run --config config.yaml'
+
+# Unique identifier name for the evaluation task
+name: mteb_qwen_3_embedding_8b_rngd
+
+execution:
+  # Execution environment type (local: local machine, remote: remote server, etc.)
+  type: local
+  # Output directory path where evaluation results will be saved
+  output_dir: mteb_qwen_3_embedding_8b_results
+  # Benchmark workspace where the evaluation will be executed
+  workspace: workspace
+
+deployment:
+  # Deployment type
+  # furiosa-llm: uses Furiosa AI's LLM deployment system to evaluate the model on RNGDs
+  # vllm: uses open-source LLM serving framework to evaluate the model on GPU
+  type: furiosa-llm
+  # Model name registered on Hugging Face
+  model_id: furiosa-ai/Qwen3-Embedding-8B
+  # RNGD uses the term 'tensor-parallel-size' in terms of number of PEs in a device,
+  # while vllm uses it in terms of number of GPUs. Assuming each RNGD has 8 PEs,
+  # we multiply the value by 8 to align with vllm's interpretation.
+  tensor_parallel_size: 8
+  data_parallel_size: 1
+  port: 8000
+  # specify device indexes to monitor usage and
+  # set environment variables for device selection
+  # extra_args: --devices for furiosa-llm, CUDA_VISIBLE_DEVICES for gpu
+  devices: [0]
+
+benchmark:
+  # The benchmark task to run
+  task: mteb_embedding
+  config:
+    # Additional arguments for the benchmark task
+    use_endpoint_type: embedding
+  eval_dir: results/Qwen/Qwen3-Embedding-8B/Qwen__Qwen3-Embedding-8B/no_revision_available

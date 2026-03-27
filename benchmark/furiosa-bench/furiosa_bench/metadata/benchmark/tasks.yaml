@@ -1,0 +1,169 @@
+metadata:
+  num_tasks: 9
+  num_frameworks: 5
+
+frameworks:
+  lm-eval-harness:
+    description: General-purpose evaluation framework for LLMs, supporting a wide range of benchmarks.
+    url: https://github.com/EleutherAI/lm-evaluation-harness
+    setup_file: scripts/install_lm_eval_harness.sh
+    framework_dir: lm-eval-harness
+    results_file: results
+  simple-evals:
+    description: OpenAI's reference evaluation framework for LLMs
+    url: https://github.com/furiosa-ai/simple-evals.git
+    origin_url: https://github.com/simple-evals/simple-evals
+    setup_file: scripts/install_simple_evals.sh
+    results_file: simple-evals/results
+  evalplus:
+    description: Code evaluation framework for LLMs.
+    url: https://github.com/evalplus/evalplus
+    setup_file: scripts/install_evalplus.sh
+    framework_dir: evalplus
+    results_file: evalplus_results
+  mteb:
+    description: A comprehensive evaluation benchmark for embedding / reranker models
+    url: https://github.com/embeddings-benchmark/mteb
+    setup_file: scripts/install_mteb.sh
+    framework_dir: Qwen3-Embedding/evaluation
+    results_file: results
+  vllm:
+    description: A vllm's serving performance benchmark reference for LLMs.
+    url: https://github.com/vllm-project/vllm.git
+    setup_file: scripts/install_vllm.sh
+    framework_dir: vllm
+    results_file: results
+tasks:
+- dryrun:
+    description: A simple dryrun task for testing the pipeline.
+    framework: none
+    defaults:
+      command: 'echo "Dryrun benchmark completed successfully" && echo "Model: {{ deployment.model_id }}" && echo "Output dir: {{ execution.output_dir }}" && echo "=== Dryrun Results ===" > {{ execution.output_dir }}/result.txt && echo "status: success" >> {{ execution.output_dir }}/result.txt && echo "model: {{ deployment.model_id }}" >> {{ execution.output_dir }}/result.txt && echo "task: dryrun" >> {{ execution.output_dir }}/result.txt && echo "timestamp: $(date -Iseconds)" >> {{ execution.output_dir }}/result.txt && echo "output_dir: {{ execution.output_dir }}" >> {{ execution.output_dir }}/result.txt && cat {{ execution.output_dir }}/result.txt'
+      config:
+        params:
+          timeout: 10
+
+- mmlu_pro_llama:
+    description: A professional-level knowledge evaluation across diverse domains, which tailors to evaluate generation models.
+    framework: lm-eval-harness
+    defaults:
+      command: >
+        ../.lm_eval_venv/bin/python -m lm_eval
+        --task {{benchmark.task}}
+        --model local-completions
+        --model_args "base_url=http://{{deployment.host}}:{{deployment.port}}/v1/{{benchmark.config.use_endpoint_type}},model={{deployment.model_id}},num_concurrent={{ benchmark.config.params.concurrency }},timeout={{ benchmark.config.params.request_timeout }},max_retries={{ benchmark.config.params.max_retries }}"
+        --log_samples --fewshot_as_multiturn --apply_chat_template
+        --output_path results
+        --use_cache .lm_cache
+      config:
+        params:
+          max_retries: 10
+          concurrency: 100
+          request_timeout: 30
+        use_endpoint_type: completions
+        debug_args: "--limit 0.001"
+
+- math:
+    description: Mathematical reasoning evaluation for language models.
+    framework: simple-evals
+    defaults:
+      command: >
+        .simple_evals_venv/bin/python -m simple-evals.simple_evals
+        --eval {{benchmark.task}}
+        --model {{deployment.model_id}}
+        --base_url http://{{deployment.host}}:{{deployment.port}}/v1
+        --custom
+      env_vars:
+        PYTHONPATH: human-eval
+      config:
+        use_endpoint_type: completions
+        debug_args: "--debug"
+
+- mgsm:
+    description: Multilingual Grade School Math (MGSM) evaluation.
+    framework: simple-evals
+    defaults:
+      command: >
+        .simple_evals_venv/bin/python
+        -m simple-evals.simple_evals
+        --eval {{benchmark.task}}
+        --model {{deployment.model_id}}
+        --base_url http://{{deployment.host}}:{{deployment.port}}/v1
+        --custom
+      env_vars:
+        PYTHONPATH: human-eval
+      config:
+        use_endpoint_type: completions
+        debug_args: "--debug"
+
+- humaneval:
+    description: Functional correctness evaluation for code generation models
+    framework: evalplus
+    defaults:
+      command: >
+        ../.evalplus_venv/bin/python -m evalplus.evaluate
+        --model {{deployment.model_id}}
+        --dataset {{benchmark.task}}
+        --base_url http://{{deployment.host}}:{{deployment.port}}/v1
+        --backend openai --greedy
+
+- mbpp:
+    description: Mostly Basic Python Problems (MBPP) evaluation.
+    framework: evalplus
+    defaults:
+      command: >
+        ../.evalplus_venv/bin/python -m evalplus.evaluate
+        --model {{deployment.model_id}}
+        --dataset {{benchmark.task}}
+        --base_url http://{{deployment.host}}:{{deployment.port}}/v1
+        --backend openai --greedy
+
+- mteb_embedding:
+    description: Evaluation for embedding models using the MTEB benchmark.
+    framework: mteb
+    defaults:
+      command: >
+        bash run_mteb.sh
+        {{deployment.model_id}}
+        {{deployment.model_id}}
+        http://{{deployment.host}}:{{deployment.port}}/v1
+      eval_command: >
+        python3 summary.py {{benchmark.eval_dir}} "MTEB(eng, v2)"
+    config:
+      use_endpoint_type: embedding
+- mteb_reranking:
+    description: Evaluation for reranking models using the MTEB benchmark.
+    framework: mteb
+    defaults:
+      command: >
+        bash run_mteb_reranking.sh
+        {{deployment.model_id}}
+        {{deployment.model_id}}
+        http://{{deployment.host}}:{{deployment.port}}/v1
+        results_embedding_0.6B_transformers
+      eval_command: >
+        python3 summary.py {{benchmark.eval_dir}} "MTEB(eng, v2)"
+    config:
+      use_endpoint_type: score
+
+- online:
+    description: Evaluation for LLM serving performance.
+    framework: vllm
+    defaults:
+      command: >
+        ../.venv/bin/vllm bench serve
+        --backend vllm
+        --model {{deployment.model_id}}
+        --base-url http://{{deployment.host}}:{{deployment.port}}/v1
+        --endpoint /{{benchmark.config.use_endpoint_type}}
+        --dataset-name random
+        --random-input-len {{benchmark.config.params.input_tokens}}
+        --random-output-len {{benchmark.config.params.output_tokens}}
+        --max-concurrency {{benchmark.config.params.concurrency}}
+        --num-prompts {{benchmark.config.params.num_prompts}}
+        --result-dir results
+        --ignore-eos
+        --ready-check-timeout-sec 0
+        --percentile-metrics ttft,tpot,itl,e2el
+        --metric-percentiles 25,50,75,90,95,99
+        --save-result

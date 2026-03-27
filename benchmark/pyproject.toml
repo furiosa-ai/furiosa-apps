@@ -1,0 +1,78 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "furiosa-bench"
+version = "0.0.1"
+description = "Furiosa Bench - AI Accelerator benchmark measuring performance and accuracy across various production settings"
+authors = [{name = "Furiosa AI Inc."}]
+license = {text = "Apache-2.0"}
+readme = "README.md"
+requires-python = ">=3.10"
+
+dependencies = [
+    "omegaconf>=2.3.0",
+    "pyyaml>=6.0",
+    "jinja2>=3.0.0",
+    "pandas>=1.5.0",
+    "numpy>=1.21.0",
+    "matplotlib>=3.5.0",
+    "huggingface-hub",
+    "types-requests",
+    "pytablewriter",
+    "requests>=2.25.0",
+]
+
+[project.scripts]
+furiosa-bench = "furiosa_bench.cli:main"
+
+[project.optional-dependencies]
+furiosa-llm = ["furiosa-llm>=2026.1.0", "furiosa_smi_py"]
+vllm = ["vllm>0.16.0"]
+
+dev = [
+    "pytest",
+    "black",
+    "ruff",
+    "pydoclint",
+    "mypy",
+    "pre-commit",
+    "types-requests",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["furiosa-bench/furiosa_bench"]
+
+[tool.mypy]
+packages = ["furiosa_bench"]
+ignore_missing_imports = true
+strict = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unreachable = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+show_error_codes = true
+pretty = true
+
+[tool.pydoclint]
+style = "google"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "C4", "S", "NPY", "PTH"]
+ignore = ["E203", "E501"]
+fixable = ["ALL"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.black]
+line-length = 120
+target-version = ["py310"]

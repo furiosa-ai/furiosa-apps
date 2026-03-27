@@ -1,0 +1,6 @@
+fastapi==0.135.2
+uvicorn[standard]==0.42.0
+psutil==7.2.2
+openai==2.30.0
+furiosa-smi-py==2026.1.1
+furiosa-llm==2026.1.0
